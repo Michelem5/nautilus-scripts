@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Prüfe, ob mkvpropedit installiert ist
+if ! command -v mkvpropedit &> /dev/null
+then
+    echo "mkvpropedit ist nicht installiert. Bitte installiere es zuerst."
+    exit 1
+fi
+
+# Verwende das Nautilus-Argument als Dateiname
+if [ -n "$1" ]; then
+    filename="$1"
+    new_title="${filename%.*}"  # Verwende den Dateinamen (ohne Erweiterung) als Titel
+    mkvpropedit --edit info --set title="$new_title" "$filename"
+else
+    echo "Bitte eine Datei auswählen."
+    exit 1
+fi

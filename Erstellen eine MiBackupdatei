@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Prüfe, ob das Argument existiert
+if [ -z "$1" ]; then
+    zenity --error --text="Bitte eine Datei auswählen."
+    exit 1
+fi
+
+# Holen Sie das aktuelle Jahr, Monat und Tag im gewünschten Format
+year=$(date '+%y')
+month=$(date '+%m')
+day=$(date '+%d')
+
+# Konstruieren Sie den neuen Dateinamen
+new_filename="$1.v$year.$(printf '%x' $month)$day"
+
+# Kopiere die Datei
+gzip -k "$1" 
+mv "$1".gz "$new_filename"
+
+
