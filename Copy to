@@ -27,10 +27,10 @@ if [ -z "$ziel" ]; then
     exit 0
 fi
 
-# Überprüfen, ob der Zielordner mit "/mnt/pcloud-crypt" beginnt
+# Überprüfen, ob der Zielordner mit "/mnt/pcloud" beginnt
 if [[ "$ziel" == /mnt/pcloud-crypt* ]]; then
-    # Wenn der Zielordner mit /mnt/pcloud-crypt beginnt, ersetze /mnt/pcloud-crypt durch pcloud-crypt:
-    ziel=${ziel//\/mnt\/pcloud-crypt\//pcloud-crypt:}
+    # Wenn der Zielordner mit /mnt/pcloud-crypt beginnt, ersetze /mnt/pcloud durch pcloud:
+    ziel=${ziel//\/mnt\/pcloud\//pcloud:}
     und verwenden Sie rclone zum kopieren
     rclone copy "$quelle" "$ziel"
 
