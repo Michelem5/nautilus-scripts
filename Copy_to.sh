@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Überprüfen, ob Zenity und rclone installiert sind
+if ! command -v zenity &> /dev/null || ! command -v rclone &> /dev/null; then
+    echo "Zenity oder rclone ist nicht installiert. Bitte installieren Sie beide, bevor Sie fortfahren."
+    exit 1
+fi
+
+# Pfadauswahl für die Quelldateien
+#quelle=$(zenity --file-selection --multiple --separator=" " --title="Quellordner auswählen")
+
+# Quell-Datei auswählen
+quelle="$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+
+# Prüfen, ob der Benutzer eine Quelle ausgewählt hat
+if [ -z "$quelle" ]; then
+    zenity --warning --text="Vorgang abgebrochen. Keine Quelldateien ausgewählt." --title="Vorgang abgebrochen"
+    exit 0
+fi
+
+# Pfadauswahl für das Zielverzeichnis
+ziel=$(zenity --file-selection --directory --title="Zielordner auswählen")
+
+# Prüfen, ob der Benutzer ein Ziel ausgewählt hat
+if [ -z "$ziel" ]; then
+    zenity --warning --text="Vorgang abgebrochen. Kein Zielordner ausgewählt." --title="Vorgang abgebrochen"
+    exit 0
+fi
+
+# Überprüfen, ob der Zielordner mit "/mnt/pcloud-crypt" beginnt
+if [[ "$ziel" == /mnt/pcloud-crypt* ]]; then
+    # Wenn der Zielordner mit /mnt/pcloud-crypt beginnt, ersetze /mnt/pcloud-crypt durch pcloud-crypt:
+    ziel=${ziel//\/mnt\/pcloud-crypt\//pcloud-crypt:}
+    und verwenden Sie rclone zum kopieren
+    rclone copy "$quelle" "$ziel"
+
+    if [ $? -eq 0 ]; then
+        zenity --info --text="Datei wurden erfolgreich kopiert." --title="Datei kopiert"
+    else
+        zenity --error --text="Es gab einen Fehler beim Kopieren dieser Datei." --title="Vorgang abgebrochen"
+    fi
+else
+    # Andernfalls verwenden Sie die normale Kopierfunktion von Nautilus
+    cp -r "$quelle" "$ziel"
+    zenity --info --text="Dateien wurden erfolgreich kopiert." --title="Datei kopiert"
+fi
